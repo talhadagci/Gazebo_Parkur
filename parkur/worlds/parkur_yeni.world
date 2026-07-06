@@ -1,0 +1,130 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="parkur_yeni">
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <scene>
+      <ambient>0.45 0.45 0.45 1.0</ambient>
+      <background>0.75 0.85 0.95 1.0</background>
+      <shadows>false</shadows>
+    </scene>
+
+    <!-- Parkur govdesi: bariyerler, rampalar, koniler, zemin yapilari -->
+    <model name="parkur_govde">
+      <static>true</static>
+      <pose>0 0 0.002 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <mesh>
+              <uri>model://parkur/meshes/parkur_yeni/parkur_govde_renkli.obj</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <mesh>
+              <uri>model://parkur/meshes/parkur_yeni/parkur_govde_renkli.obj</uri>
+            </mesh>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- Renkli tabelalar (2-11, STOP) + direkleri + kasisler -->
+    <model name="tabelalar">
+      <static>true</static>
+      <pose>0 0 0.002 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <mesh>
+              <uri>model://parkur/meshes/parkur_yeni/tabelalar_renkli.obj</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <mesh>
+              <uri>model://parkur/meshes/parkur_yeni/tabelalar_renkli.obj</uri>
+            </mesh>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- Kayar engelin sabit portal cercevesi: statik model olmali, yoksa
+         7 m'lik trimesh her adimda dinamik carpisma hesabina girip
+         simulasyonu ~60x yavaslatiyor -->
+    <model name="kayar_engel_cerceve">
+      <static>true</static>
+      <pose>0 0 0.002 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <mesh>
+              <uri>model://parkur/meshes/parkur_yeni/kyr26_sabit_m.obj</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <mesh>
+              <uri>model://parkur/meshes/parkur_yeni/kyr26_sabit_m.obj</uri>
+            </mesh>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- Kayan perde: kinematic link, prismatic joint ile dogrudan dunyaya
+         bagli; plugin sabit hizla iki limit arasinda surer -->
+    <model name="kayar_engel">
+      <pose>0 0 0.002 0 0 0</pose>
+
+      <link name="kayan">
+        <kinematic>true</kinematic>
+        <inertial>
+          <pose>-2.06 9.94 1.45 0 0 0</pose>
+          <mass>25.0</mass>
+          <inertia>
+            <ixx>12.0</ixx><iyy>12.0</iyy><izz>4.0</izz>
+            <ixy>0</ixy><ixz>0</ixz><iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <visual name="visual">
+          <geometry>
+            <mesh>
+              <uri>model://parkur/meshes/parkur_yeni/kyr26_kayan_m.obj</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <!-- collision basit kutu: 99 seritli perde trimesh'i her adimda
+             carpisma hesabina girince simulasyonu asiri yavaslatiyor -->
+        <!-- kutu sadece perde seritlerini kapsar; kirisin trimesh'ine
+             degmemeli, yoksa surekli temas hesabi RTF'i dusuruyor -->
+        <collision name="collision">
+          <pose>-2.06 9.945 1.22 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.12 1.05 1.55</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+
+      <plugin name="kayar_engel_plugin" filename="libkayar_engel_plugin.so">
+        <!-- hiz: m/s cinsinden sabit kayma hizi;
+             alt/ust: baslangic konumuna gore hareket limitleri (m) -->
+        <hiz>0.2</hiz>
+        <alt>-2.2</alt>
+        <ust>1.8</ust>
+      </plugin>
+    </model>
+  </world>
+</sdf>

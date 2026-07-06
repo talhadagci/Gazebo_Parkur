@@ -1,0 +1,7 @@
+# Plugin derleme ciktilari
+parkur/plugins/*/build/
+
+# Sistem / gecici dosyalar
+*.log
+Thumbs.db
+__pycache__/
