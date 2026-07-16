@@ -1,0 +1,16 @@
+# colcon / ROS 2 derleme ciktilari
+build/
+install/
+log/
+
+# Gazebo plugin derleme ciktisi
+src/rover_parkur/plugins/*/build/
+
+# Python
+__pycache__/
+*.pyc
+
+# Gecici / sistem dosyalari
+*.log
+Thumbs.db
+scratch/
